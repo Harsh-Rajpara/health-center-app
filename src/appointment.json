@@ -1,0 +1,14 @@
+{
+  "appointments": [
+    {
+      "id": "81ac",
+      "name": "Harsh Rajpara",
+      "email": "hrajpara787@gmail.com",
+      "date": "2026-01-30",
+      "department": "Cardiology",
+      "phone": "4654664547",
+      "message": "vff",
+      "status": "completed"
+    }
+  ]
+}
