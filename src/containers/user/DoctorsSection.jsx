@@ -39,11 +39,11 @@ const DoctorsSection = () => {
               key={doctor.id}
               className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group hover:-translate-y-1"
             >
-              <div className="h-74 bg-gradient-to-br from-teal-50 to-teal-100 overflow-hidden">
+              <div className="h-64 bg-gradient-to-br from-teal-50 to-teal-100 overflow-hidden">
                 <img
                   src={doctor.img}
                   alt={doctor.name}
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="p-5">

@@ -200,7 +200,7 @@ const NewsSection = () => {
                 onClick={() => handleOpen(i)}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border border-gray-100"
               >
-                <div className="relative h-48 overflow-hidden bg-teal-50">
+                <div className="relative h-56 overflow-hidden bg-teal-50">
                   {item.image ? (
                     <img
                       src={item.image}

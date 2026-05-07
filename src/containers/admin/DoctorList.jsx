@@ -17,7 +17,7 @@ const DoctorsList = () => {
   const filtered = doctors.filter(d =>
     d.name?.toLowerCase().includes(search.toLowerCase()) ||
     d.email?.toLowerCase().includes(search.toLowerCase()) ||
-    d.specialization?.toLowerCase().includes(search.toLowerCase())
+    d.department?.toLowerCase().includes(search.toLowerCase())
   );
 
   // Open delete modal
@@ -71,7 +71,7 @@ const DoctorsList = () => {
           </svg>
           <input
             type="text"
-            placeholder="Search by name, email or specialization..."
+            placeholder="Search by name, email or department..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -84,7 +84,7 @@ const DoctorsList = () => {
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
-                  {["Doctor", "Specialization", "Email", "Phone", "Actions"].map(h => (
+                  {["Doctor", "Department", "Email", "Phone", "Actions"].map(h => (
                     <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
@@ -120,7 +120,7 @@ const DoctorsList = () => {
                     </td>
                     <td className="px-5 py-4">
                       <span className="inline-flex px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-semibold rounded-full border border-teal-100">
-                        {doc.specialization}
+                        {doc.department}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-sm text-gray-600">{doc.email}</td>
