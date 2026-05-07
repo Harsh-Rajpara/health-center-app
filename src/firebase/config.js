@@ -22,12 +22,12 @@ import { getStorage } from "firebase/storage";
 
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDhXcBvZvVgt6FWn1elPUaXDl_hiFqe4XY",
-  authDomain: "health-center-e2814.firebaseapp.com",
-  projectId: "health-center-e2814",
-  storageBucket: "health-center-e2814.firebasestorage.app",
-  messagingSenderId: "47586904747",
-  appId: "1:47586904747:web:af9b1361a5f7a68b5d85ee",
+  apiKey: REACT_APP_FIREBASE_API_KEY,
+  authDomain: REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: REACT_APP_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
@@ -37,7 +37,7 @@ export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 
 // Admin email
-const ADMIN_EMAIL = "hrajpara715@gmail.com";
+const ADMIN_EMAIL = REACT_APP_ADMIN_EMAIL;
 
 // Sign in with Google
 export const signInWithGoogle = async () => {
