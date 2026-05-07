@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
 
-// 🔥 FETCH USERS FROM FIREBASE
+// get user firebasse
 export const fetchUsers = createAsyncThunk(
   "users/fetchUsers",
   async (_, { rejectWithValue }) => {

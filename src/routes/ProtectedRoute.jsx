@@ -1,26 +1,15 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getCurrentUser } from "../firebase/config";
-import { CircularProgress, Box } from "@mui/material";
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-function ProtectedRoute({ role }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-      setLoading(false);
-    };
-    checkAuth();
-  }, []);
+const ProtectedAdminRoute = () => {
+  const { user, isAdmin, loading } = useSelector((state) => state.auth);
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <CircularProgress />
-      </Box>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="w-10 h-10 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin" />
+      </div>
     );
   }
 
@@ -28,11 +17,11 @@ function ProtectedRoute({ role }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (role && user.role !== role) {
+  if (!isAdmin) {
     return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
-}
+};
 
-export default ProtectedRoute;
+export default ProtectedAdminRoute;

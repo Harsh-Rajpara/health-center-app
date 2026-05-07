@@ -1,4 +1,3 @@
-// src/redux/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { signInWithGoogle, logoutUser, getCurrentUser } from '../../firebase/config';
 
@@ -25,7 +24,7 @@ export const logout = createAsyncThunk('auth/logout', async () => {
   return null;
 });
 
-// Check current user
+// current user
 export const checkUser = createAsyncThunk('auth/checkUser', async () => {
   const user = await getCurrentUser();
   return user;

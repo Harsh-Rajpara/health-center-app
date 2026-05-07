@@ -1,4 +1,3 @@
-// src/components/DoctorsSection.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { db } from "../../firebase/config";
@@ -60,7 +59,6 @@ const DoctorsSection = () => {
           ))}
         </div>
 
-        {/* CTA */}
         <div className="text-center mt-10">
           <Link
             to="/doctors"

@@ -71,7 +71,6 @@ const Sidebar = () => {
 
   return (
     <div className="w-64 h-screen bg-teal-800 flex flex-col flex-shrink-0 shadow-xl">
-      {/* Logo */}
       <div className="px-5 py-5 border-b border-teal-700/60">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-sm flex-shrink-0">
@@ -85,7 +84,7 @@ const Sidebar = () => {
       </div>
 
   
-      {/* Nav */}
+      {/* Navigation */}
       <nav className="flex-1 pt-3 px-3 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
           const active = isActive(item);
@@ -114,7 +113,7 @@ const Sidebar = () => {
       <div className="px-3 py-4 border-t border-teal-700/60">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-teal-200 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200"
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-teal-200  transition-all duration-200"
         >
           <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

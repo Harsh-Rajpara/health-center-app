@@ -3,7 +3,6 @@ import { auth } from "./config";
 
 const db = getFirestore();
 
-// Function to set admin role (run once for specific email)
 export const setAdminRole = async (email) => {
   try {
     const user = auth.currentUser;
@@ -22,7 +21,6 @@ export const setAdminRole = async (email) => {
   }
 };
 
-// Function to check if user is admin
 export const isUserAdmin = async (uid) => {
   try {
     const adminRef = doc(db, "admins", uid);

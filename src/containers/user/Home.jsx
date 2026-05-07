@@ -10,10 +10,8 @@ import NewsSection from './NewsSection';
 const Home = () => {
     return (
         <div>
-            {/* Hero Slider Section */}
             <section id="home"><HeroSlider /></section>
             
-            {/* About Section */}
             <section id="about"><About /></section>
             
             <section id="doctors"><DoctorsSection /></section>

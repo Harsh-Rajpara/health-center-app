@@ -20,14 +20,14 @@ import {
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Firebase Configuration from environment variables
+// Firebase Configuration
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  apiKey: "AIzaSyDhXcBvZvVgt6FWn1elPUaXDl_hiFqe4XY",
+  authDomain: "health-center-e2814.firebaseapp.com",
+  projectId: "health-center-e2814",
+  storageBucket: "health-center-e2814.firebasestorage.app",
+  messagingSenderId: "47586904747",
+  appId: "1:47586904747:web:af9b1361a5f7a68b5d85ee",
 };
 
 // Initialize Firebase
@@ -36,8 +36,8 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 
-// Admin email from environment variable
-const ADMIN_EMAIL = process.env.REACT_APP_ADMIN_EMAIL;
+// Admin email
+const ADMIN_EMAIL = "hrajpara715@gmail.com";
 
 // Sign in with Google
 export const signInWithGoogle = async () => {
@@ -48,14 +48,13 @@ export const signInWithGoogle = async () => {
     // Check if this is admin
     const isAdmin = user.email === ADMIN_EMAIL;
 
-    // Check if user already exists in Firestore
+    // Check if user already exists
     const userRef = doc(db, "users", user.uid);
     const userDoc = await getDoc(userRef);
-    
+
     let userData;
-    
+
     if (!userDoc.exists()) {
-      // NEW USER - Set createdAt
       userData = {
         uid: user.uid,
         name: user.displayName,
@@ -65,20 +64,17 @@ export const signInWithGoogle = async () => {
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
         appointmentCount: 0,
-        status: 'active'
+        status: "active",
       };
       await setDoc(userRef, userData);
-      console.log('New user created with createdAt:', userData.createdAt);
+      console.log("New user created with createdAt:", userData.createdAt);
     } else {
-      // EXISTING USER - Only update lastLogin, preserve createdAt
       const existingData = userDoc.data();
       userData = {
         ...existingData,
-        lastLogin: new Date().toISOString(),
+        lastLogin: new Date().toISOString(), 
       };
       await setDoc(userRef, userData, { merge: true });
-      console.log('Existing user logged in - createdAt preserved:', existingData.createdAt);
-      console.log('lastLogin updated to:', userData.lastLogin);
     }
 
     return { success: true, user: userData, isAdmin: isAdmin };
@@ -87,7 +83,6 @@ export const signInWithGoogle = async () => {
     return { success: false, error: error.message };
   }
 };
-
 // Logout
 export const logoutUser = async () => {
   try {
@@ -99,16 +94,15 @@ export const logoutUser = async () => {
   }
 };
 
-// Get all doctors
 export const getAllDoctors = async () => {
   const snapshot = await getDocs(collection(db, "doctors"));
+
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
 };
 
-// Get current user from Firestore
 export const getCurrentUser = () => {
   return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -142,10 +136,10 @@ export const getCurrentUser = () => {
   });
 };
 
-// Get all news
 export const getAllNews = async () => {
   try {
     const snapshot = await getDocs(collection(db, "news"));
+
     return snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -155,5 +149,4 @@ export const getAllNews = async () => {
     return [];
   }
 };
-
 export const storage = getStorage(app);

@@ -9,7 +9,6 @@ const DoctorsList = () => {
   const { doctors, loading } = useSelector(s => s.doctors);
   const [search, setSearch] = useState('');
   
-  // State for delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [doctorToDelete, setDoctorToDelete] = useState(null);
 
@@ -21,13 +20,12 @@ const DoctorsList = () => {
     d.specialization?.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Open delete confirmation modal
+  // Open delete modal
   const handleDeleteClick = (id, name) => {
     setDoctorToDelete({ id, name });
     setShowDeleteModal(true);
   };
 
-  // Confirm delete
   const confirmDelete = () => {
     if (doctorToDelete) {
       dispatch(deleteDoctor(doctorToDelete.id));
@@ -36,7 +34,6 @@ const DoctorsList = () => {
     }
   };
 
-  // Cancel delete
   const cancelDelete = () => {
     setShowDeleteModal(false);
     setDoctorToDelete(null);
@@ -51,7 +48,6 @@ const DoctorsList = () => {
   return (
     <>
       <div className="p-7 space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Doctors</h1>
@@ -153,7 +149,7 @@ const DoctorsList = () => {
         </div>
       </div>
 
-      {/* Custom Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">

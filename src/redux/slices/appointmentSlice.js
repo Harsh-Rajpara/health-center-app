@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 
-// 🔥 FETCH APPOINTMENTS
+// get Appointments
 export const fetchAppointments = createAsyncThunk(
   "appointments/fetchAppointments",
   async () => {
@@ -21,7 +21,7 @@ export const fetchAppointments = createAsyncThunk(
   }
 );
 
-// 🔥 UPDATE STATUS
+// upsate Status
 export const updateAppointmentStatus = createAsyncThunk(
   "appointments/updateStatus",
   async ({ id, status, reason }) => {
@@ -47,7 +47,6 @@ const appointmentSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      // FETCH
       .addCase(fetchAppointments.pending, (state) => {
         state.loading = true;
       })
@@ -60,7 +59,6 @@ const appointmentSlice = createSlice({
         state.error = action.error.message;
       })
 
-      // UPDATE STATUS
       .addCase(updateAppointmentStatus.fulfilled, (state, action) => {
         const { id, status, reason } = action.payload;
 

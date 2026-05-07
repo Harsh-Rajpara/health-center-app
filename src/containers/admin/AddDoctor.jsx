@@ -1,374 +1,10 @@
-// // src/pages/Admin/AddDoctor.jsx
-// import React, { useState, useEffect } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { addDoctor, updateDoctor, fetchDoctors } from '../../redux/slices/doctorSlice';
-// import { useNavigate, useParams } from 'react-router-dom';
-// import { 
-//   ArrowBack, 
-//   Save, 
-//   Person, 
-//   Email, 
-//   Phone, 
-//   MedicalServices,
-//   School,
-//   Work,
-//   LocationOn,
-//   Description,
-//   Image
-// } from '@mui/icons-material';
-// import { uploadImage } from "../../utils/uploadImage";
-
-// const AddDoctor = () => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const { id } = useParams();
-//   const { doctors } = useSelector((state) => state.doctors);
-//   const [loading, setLoading] = useState(false); // form submit
-// const [uploading, setUploading] = useState(false); // image upload
-//     const [imagePreview, setImagePreview] = useState("");
-
-//   const [formData, setFormData] = useState({
-//     name: '',
-//     email: '',
-//     specialization: '',
-//     phone: '',
-//     address: '',
-//     experience: '',
-//     qualification: '',
-//     bio: '',
-//     img: ''
-//   });
-
-//   // ✅ Load doctor for edit
-//   useEffect(() => {
-//     if (id) {
-//       const doctor = doctors.find(d => d.id === id);
-//       if (doctor) {
-//         setFormData(doctor);
-//         setImagePreview(doctor.img);
-//       }
-//     }
-//   }, [id, doctors]);
-
-//   // ✅ Input change
-//   const handleChange = (e) => {
-//     setFormData(prev => ({
-//       ...prev,
-//       [e.target.name]: e.target.value
-//     }));
-//   };
-
-//   const handleImageChange = async (e) => {
-//   const file = e.target.files[0];
-//   if (!file) return;
-
-//   setUploading(true);
-
-//   // instant preview (local)
-//   const localPreview = URL.createObjectURL(file);
-//   setImagePreview(localPreview);
-
-//   try {
-//     const url = await uploadImage(file);
-
-//     setFormData((prev) => ({
-//       ...prev,
-//       img: url,
-//     }));
-
-//     setImagePreview(url); // final cloud image
-
-//   } catch (err) {
-//     console.log(err);
-//   } finally {
-//     setUploading(false);
-//   }
-// };
-
-//   // ✅ Submit (IMPORTANT FIX)
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     // ❌ prevent submit if image uploading
-//     if (uploading) {
-//       alert("Please wait, image is uploading...");
-//       return;
-//     }
-
-//     // ❌ prevent empty image
-//     if (!formData.img) {
-//       alert("Please upload doctor image");
-//       return;
-//     }
-
-//     setLoading(true);
-
-//     try {
-//       if (id) {
-//         await dispatch(updateDoctor({ id, ...formData }));
-//       } else {
-//         await dispatch(addDoctor(formData));
-//       }
-
-//       navigate('/admin/doctors');
-
-//     } catch (err) {
-//       console.error(err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const specializations = [
-//     'Cardiologist','Neurologist','Pediatrician','Orthopedic Surgeon',
-//     'Dermatologist','Gynecologist','Psychiatrist','Radiologist',
-//     'Surgeon','General Physician'
-//   ];
-
-//   return (
-//     <div className="space-y-8 p-8">
-//       {/* Header */}
-//       <div className="flex items-start justify-between">
-//         <div className="flex items-center gap-4">
-//           <button
-//             onClick={() => navigate('/admin/doctors')}
-//             className="p-3 bg-white rounded-xl border border-teal-100 text-teal-600 hover:bg-teal-50 hover:shadow-md transition-all duration-200"
-//           >
-//             <ArrowBack className="w-5 h-5" />
-//           </button>
-//           <div>
-//             <h1 className="text-4xl font-bold text-teal-900 tracking-tight">
-//               {id ? 'Edit Doctor' : 'Add New Doctor'}
-//             </h1>
-//             <p className="text-teal-500 text-base mt-1">
-//               {id ? 'Update doctor information' : 'Fill in the details to add a new doctor'}
-//             </p>
-//           </div>
-//         </div>
-//         <div className="flex items-center gap-2 bg-teal-600 text-white text-sm font-semibold px-4 py-2 rounded-xl shadow-sm shadow-teal-200">
-//           <MedicalServices size={16} />
-//           Doctor Management
-//         </div>
-//       </div>
-
-//       {/* Form */}
-//       <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-teal-100 overflow-hidden shadow-lg">
-//         <div className="p-8">
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//             {/* Name */}
-//             <div>
-//               <label className="block text-sm font-semibold text-teal-800 mb-2">
-//                 Doctor Name *
-//               </label>
-//               <div className="relative">
-//                 <Person className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-//                 <input
-//                   type="text"
-//                   name="name"
-//                   required
-//                   value={formData.name}
-//                   onChange={handleChange}
-//                   placeholder="Dr. John Doe"
-//                   className="w-full pl-10 pr-4 py-3 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base"
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Email */}
-//             <div>
-//               <label className="block text-sm font-semibold text-teal-800 mb-2">
-//                 Email Address *
-//               </label>
-//               <div className="relative">
-//                 <Email className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-//                 <input
-//                   type="email"
-//                   name="email"
-//                   required
-//                   value={formData.email}
-//                   onChange={handleChange}
-//                   placeholder="doctor@healthcenter.com"
-//                   className="w-full pl-10 pr-4 py-3 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base"
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Specialization */}
-//             <div>
-//               <label className="block text-sm font-semibold text-teal-800 mb-2">
-//                 Specialization *
-//               </label>
-//               <div className="relative">
-//                 <MedicalServices className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-//                 <select
-//                   name="specialization"
-//                   required
-//                   value={formData.specialization}
-//                   onChange={handleChange}
-//                   className="w-full pl-10 pr-4 py-3 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white appearance-none cursor-pointer text-base"
-//                 >
-//                   <option value="">Select Specialization</option>
-//                   {specializations.map((spec, index) => (
-//                     <option key={index} value={spec}>{spec}</option>
-//                   ))}
-//                 </select>
-//               </div>
-//             </div>
-
-//             {/* Phone */}
-//             <div>
-//               <label className="block text-sm font-semibold text-teal-800 mb-2">
-//                 Phone Number
-//               </label>
-//               <div className="relative">
-//                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-//                 <input
-//                   type="tel"
-//                   name="phone"
-//                   value={formData.phone}
-//                   onChange={handleChange}
-//                   placeholder="+1 234 567 8900"
-//                   className="w-full pl-10 pr-4 py-3 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base"
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Experience */}
-//             <div>
-//               <label className="block text-sm font-semibold text-teal-800 mb-2">
-//                 Years of Experience
-//               </label>
-//               <div className="relative">
-//                 <Work className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-//                 <input
-//                   type="text"
-//                   name="experience"
-//                   value={formData.experience}
-//                   onChange={handleChange}
-//                   placeholder="10+ years"
-//                   className="w-full pl-10 pr-4 py-3 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base"
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Qualification */}
-//             <div>
-//               <label className="block text-sm font-semibold text-teal-800 mb-2">
-//                 Qualification
-//               </label>
-//               <div className="relative">
-//                 <School className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-//                 <input
-//                   type="text"
-//                   name="qualification"
-//                   value={formData.qualification}
-//                   onChange={handleChange}
-//                   placeholder="MBBS, MD, PhD"
-//                   className="w-full pl-10 pr-4 py-3 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base"
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Address */}
-//             <div className="md:col-span-2">
-//               <label className="block text-sm font-semibold text-teal-800 mb-2">
-//                 Address
-//               </label>
-//               <div className="relative">
-//                 <LocationOn className="absolute left-3 top-3 text-teal-400 w-5 h-5" />
-//                 <input
-//                   type="text"
-//                   name="address"
-//                   value={formData.address}
-//                   onChange={handleChange}
-//                   placeholder="Clinic/Hospital Address"
-//                   className="w-full pl-10 pr-4 py-3 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base"
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Bio */}
-//             <div className="md:col-span-2">
-//               <label className="block text-sm font-semibold text-teal-800 mb-2">
-//                 Bio / Description
-//               </label>
-//               <div className="relative">
-//                 <Description className="absolute left-3 top-3 text-teal-400 w-5 h-5" />
-//                 <textarea
-//                   name="bio"
-//                   rows="4"
-//                   value={formData.bio}
-//                   onChange={handleChange}
-//                   placeholder="Doctor's professional background and expertise..."
-//                   className="w-full pl-10 pr-4 py-3 border border-teal-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none text-base"
-//                 ></textarea>
-//               </div>
-//             </div>
-
-//             {/* Image URL */}
-//             {/* Image Upload */}
-//             <div>
-//           <input
-//             type="file"
-//             accept="image/*"
-//             onChange={handleImageChange}
-//           />
-
-//           {uploading && (
-//             <p className="text-blue-500 text-sm">Uploading image...</p>
-//           )}
-
-//           {(imagePreview || formData.img) && (
-//             <img
-//               src={imagePreview || formData.img}
-//               alt="doctor"
-//               className="w-24 h-24 rounded-xl object-cover mt-2"
-//             />
-//           )}
-//         </div>
-//           </div>
-//         </div>
-
-//         {/* Form Actions */}
-//         <div className="flex gap-4 px-8 py-6 bg-gradient-to-r from-teal-50/50 to-white border-t border-teal-100">
-//           <button
-//             type="submit"
-//             disabled={loading || uploading }
-//             className="flex items-center gap-2 px-8 py-3 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 transition-all duration-200 shadow-md disabled:opacity-50 text-base"
-//           >
-//             {loading ? (
-//               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-//             ) : (
-//               <Save className="w-5 h-5" />
-//             )}
-//             {id ? 'Update Doctor' : 'Add Doctor'}
-//           </button>
-//           <button
-//             type="button"
-//             onClick={() => navigate('/admin/doctors')}
-//             className="px-8 py-3 border-2 border-teal-200 text-teal-700 font-semibold rounded-xl hover:bg-teal-50 transition-all duration-200 text-base"
-//           >
-//             Cancel
-//           </button>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default AddDoctor;
-
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addDoctor, updateDoctor, fetchDoctors } from '../../redux/slices/doctorSlice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { uploadImage } from "../../utils/uploadImage";
-
-const SPECIALIZATIONS = [
-  'Cardiologist','Neurologist','Pediatrician','Orthopedic Surgeon',
-  'Dermatologist','Gynecologist','Psychiatrist','Radiologist',
-  'Surgeon','General Physician',
-];
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 const Field = ({ label, required, children }) => (
   <div>
@@ -390,15 +26,39 @@ const AddDoctor = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
+  const [departments, setDepartments] = useState([]);
+  const [fetchingDepartments, setFetchingDepartments] = useState(true);
+  
   const [formData, setFormData] = useState({
-    name: '', email: '', specialization: '', phone: '',
+    name: '', email: '', department: '', phone: '',
     address: '', experience: '', qualification: '', bio: '', img: ''
   });
 
   useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        setFetchingDepartments(true);
+        const snap = await getDoc(doc(db, "settings", "appointmentConfig"));
+        if (snap.exists()) {
+          const data = snap.data();
+          setDepartments(data.departments || []);
+        }
+      } catch (err) {
+        console.error("Error fetching departments:", err);
+      } finally {
+        setFetchingDepartments(false);
+      }
+    };
+    fetchDepartments();
+  }, []);
+
+  useEffect(() => {
     if (id) {
       const doc = doctors.find(d => d.id === id);
-      if (doc) { setFormData(doc); setImagePreview(doc.img); }
+      if (doc) { 
+        setFormData(doc); 
+        setImagePreview(doc.img); 
+      }
     }
   }, [id, doctors]);
 
@@ -438,7 +98,6 @@ const AddDoctor = () => {
 
   return (
     <div className="p-7 space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate('/admin/doctors')}
@@ -454,7 +113,6 @@ const AddDoctor = () => {
         </div>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-gray-100">
           <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Personal Information</h2>
@@ -468,12 +126,25 @@ const AddDoctor = () => {
             <input type="email" name="email" required value={formData.email} onChange={handleChange}
               placeholder="doctor@healthcenter.com" className={inputClass} />
           </Field>
-          <Field label="Specialization" required>
-            <select name="specialization" required value={formData.specialization} onChange={handleChange}
-              className={inputClass + " appearance-none cursor-pointer bg-white"}>
-              <option value="">Select Specialization</option>
-              {SPECIALIZATIONS.map(s => <option key={s} value={s}>{s}</option>)}
+          <Field label="Department" required>
+            <select 
+              name="department" 
+              required 
+              value={formData.department} 
+              onChange={handleChange}
+              disabled={fetchingDepartments}
+              className={inputClass + " appearance-none cursor-pointer bg-white"}
+            >
+              <option value="">
+                {fetchingDepartments ? "Loading departments..." : "Select Department"}
+              </option>
+              {departments.map((dept, index) => (
+                <option key={index} value={dept}>{dept}</option>
+              ))}
             </select>
+            {departments.length === 0 && !fetchingDepartments && (
+              <p className="text-amber-600 text-xs mt-1">No departments found. Please add departments in settings.</p>
+            )}
           </Field>
           <Field label="Phone Number">
             <input type="tel" name="phone" value={formData.phone} onChange={handleChange}
@@ -501,7 +172,6 @@ const AddDoctor = () => {
             </Field>
           </div>
 
-          {/* Image Upload */}
           <div className="col-span-2">
             <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-3">
               Profile Photo <span className="text-red-400">*</span>
@@ -538,7 +208,6 @@ const AddDoctor = () => {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-3 px-6 py-5 bg-gray-50 border-t border-gray-100">
           <button type="submit" disabled={loading || uploading}
             className="flex items-center gap-2 px-6 py-2.5 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 disabled:opacity-50 text-sm transition-colors shadow-sm">

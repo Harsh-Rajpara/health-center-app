@@ -13,10 +13,7 @@ const Dashboard = () => {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
 
- 
-
-  // Helper function to get initials
-  const getInitials = (name) => {
+   const getInitials = (name) => {
     if (!name) return "NA";
     return name
       .split(" ")
@@ -26,7 +23,6 @@ const Dashboard = () => {
       .slice(0, 2);
   };
 
-  // Helper function to format date
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     try {
@@ -76,7 +72,7 @@ const Dashboard = () => {
         
         console.log("Pending appointments count:", pendingCount);
         
-        // Sort appointments by date (newest first) and take ONLY LAST 4
+        // Sort appointments by date 
         const sortedAppointments = appointmentsList.sort((a, b) => {
           return new Date(b.date) - new Date(a.date);
         }).slice(0, 4);
@@ -98,7 +94,6 @@ const Dashboard = () => {
         
         console.log("Formatted appointments (last 4):", formattedAppointments);
         
-        // Process users data
         const usersList = [];
         usersSnapshot.forEach(doc => {
           const data = doc.data();
@@ -108,16 +103,14 @@ const Dashboard = () => {
           usersList.push({ 
             id: doc.id, 
             ...data,
-            // If no createdAt, use current date or a default
             sortDate: data.createdAt || data.registeredAt || data.joinDate || new Date()
           });
         });
         
-        // Sort by date (newest first) - handle different date formats
+        // Sort by date (newest first)
         const sortedUsers = usersList.sort((a, b) => {
           let dateA, dateB;
           
-          // Handle different date formats for user A
           if (a.createdAt instanceof Timestamp) {
             dateA = a.createdAt.toDate();
           } else if (a.createdAt) {
@@ -128,7 +121,6 @@ const Dashboard = () => {
             dateA = new Date(0); // Very old date if no date field
           }
           
-          // Handle different date formats for user B
           if (b.createdAt instanceof Timestamp) {
             dateB = b.createdAt.toDate();
           } else if (b.createdAt) {
@@ -142,9 +134,7 @@ const Dashboard = () => {
           return dateB - dateA;
         }).slice(0, 6);
         
-        // Format users data
         const formattedUsers = sortedUsers.map(user => {
-          // Get the registration date in a readable format
           let registrationDate = "N/A";
           
           if (user.createdAt instanceof Timestamp) {
@@ -158,7 +148,6 @@ const Dashboard = () => {
           } else if (user.date) {
             registrationDate = formatDate(user.date);
           } else {
-            // If no date field found, show a message
             registrationDate = "Date unknown";
           }
           
@@ -169,13 +158,12 @@ const Dashboard = () => {
             email: user.email,
             phone: user.phone,
             date: registrationDate,
-            rawDate: user.createdAt // Keep for debugging
+            rawDate: user.createdAt 
           };
         });
         
         console.log("Formatted users (last 6):", formattedUsers);
         
-        // Update stats
         setStats([
           { title: "Total Doctors", value: doctorsSnapshot.size.toString(), accent: "bg-teal-500" },
           { title: "Total Appointments", value: appointmentsSnapshot.size.toString(), accent: "bg-teal-500" },
@@ -250,14 +238,12 @@ const Dashboard = () => {
 
   return (
     <div className="p-7 space-y-6 min-h-full">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
         </div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-5">
         {stats.map((s, i) => (
           <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
@@ -270,7 +256,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Tables Row */}
       <div className="grid grid-cols-2 gap-5">
         {/* Appointments Table - Last 4 */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -310,7 +295,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Users Table - Last 6 */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2.5">

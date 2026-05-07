@@ -11,7 +11,6 @@ function NewsAdmin() {
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({ title: "", content: "", date: "", image: "" });
   
-  // Delete confirmation modal state
   const [deleteConfirm, setDeleteConfirm] = useState({ open: false, id: null, title: "" });
 
   useEffect(() => { dispatch(fetchNews()); }, [dispatch]);
@@ -61,7 +60,6 @@ function NewsAdmin() {
     closeDialog();
   };
 
-  // Updated delete handler - opens custom modal instead of window.confirm
   const handleDeleteClick = (id, title) => {
     setDeleteConfirm({ open: true, id, title });
   };
@@ -89,11 +87,10 @@ function NewsAdmin() {
 
   return (
     <div className="p-7 space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">News Management</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Create and manage health news articles</p>
+          <p className="text-gray-500 text-sm mt-0.5">Create and manage health news</p>
         </div>
         <button onClick={openAdd}
           className="flex items-center gap-2 bg-teal-600 text-white px-4 py-2.5 rounded-xl hover:bg-teal-700 font-semibold text-sm transition-colors shadow-sm">
@@ -174,7 +171,7 @@ function NewsAdmin() {
         </div>
       </div>
 
-      {/* Add/Edit News Modal */}
+      {/*News Modal */}
       {openDialog && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" style={{ margin: 0, padding: '1rem' }}>
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" style={{ margin: 0, padding: '1rem' }}>
@@ -231,7 +228,7 @@ function NewsAdmin() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {deleteConfirm.open && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4" style={{ margin: 0, padding: '1rem' }}>
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">

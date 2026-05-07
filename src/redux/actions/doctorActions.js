@@ -1,6 +1,6 @@
 const API_URL = "http://localhost:5000/doctors";
 
-// READ
+// Get Doctors
 export const fetchDoctors = () => {
   return async (dispatch) => {
     const res = await fetch(API_URL);
@@ -13,7 +13,7 @@ export const fetchDoctors = () => {
   };
 };
 
-// CREATE
+// add Doctor
 export const addDoctor = (doctorData) => {
   return async (dispatch) => {
     const newDoctor = {
@@ -38,12 +38,12 @@ export const addDoctor = (doctorData) => {
   };
 };
 
-// UPDATE
+// update Doctors
 export const updateDoctor = (doctor) => {
   return async (dispatch) => {
     const updatedDoctor = {
       ...doctor,
-      updatedAt: new Date().toISOString(), // ✅ only this changes
+      updatedAt: new Date().toISOString(), 
     };
 
     await fetch(`http://localhost:5000/doctors/${doctor.id}`, {
@@ -60,7 +60,7 @@ export const updateDoctor = (doctor) => {
 };
 
 
-// DELETE (soft delete)
+// delete Doctors
 export const deleteDoctor = (doctor) => {
   return async (dispatch) => {
     const updated = { ...doctor, isDeleted: true };
@@ -73,7 +73,7 @@ export const deleteDoctor = (doctor) => {
 
     dispatch({
       type: "DELETE_DOCTOR",
-      payload: updated, // ✅ send full object
+      payload: updated, 
     });
   };
 };

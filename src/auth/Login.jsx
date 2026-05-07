@@ -1,8 +1,7 @@
-// src/auth/Login.jsx
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { googleLogin, clearError } from "../redux/slices/authSlice";
+import { googleLogin } from "../redux/slices/authSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -19,23 +18,14 @@ const Login = () => {
     dispatch(googleLogin());
   };
 
-  const trustItems = [
-    { label: "Secure login", icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" },
-    { label: "HIPAA compliant", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
-    { label: "Private & safe", icon: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-  ];
-
   return (
     <div className="min-h-screen bg-teal-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
 
-      {/* Decorative blobs */}
       <div className="absolute -top-32 -left-24 w-96 h-96 bg-teal-200/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -right-16 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Card */}
       <div className="relative z-10 bg-white rounded-3xl shadow-2xl shadow-teal-100 p-8 sm:p-10 w-full max-w-sm">
 
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-teal-600/30">
             <span className="text-white font-bold text-2xl leading-none">H</span>
@@ -44,7 +34,6 @@ const Login = () => {
           <p className="text-gray-400 text-sm mt-1">Your health, our priority</p>
         </div>
 
-        {/* Error */}
         {error && (
           <div className="mb-5 flex items-center gap-2.5 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
             <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,14 +43,12 @@ const Login = () => {
           </div>
         )}
 
-        {/* Divider */}
         <div className="flex items-center gap-3 mb-5">
           <div className="flex-1 h-px bg-gray-200" />
           <span className="text-gray-400 text-xs font-semibold uppercase tracking-widest">Sign in to continue</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        {/* Google Button */}
         <button
           onClick={handleGoogleLogin}
           disabled={loading}

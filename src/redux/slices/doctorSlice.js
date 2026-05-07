@@ -1,9 +1,8 @@
-// src/redux/slices/doctorSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { db } from '../../firebase/config';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 
-// Fetch doctors
+// Get doctors
 export const fetchDoctors = createAsyncThunk('doctors/fetchDoctors', async () => {
   const querySnapshot = await getDocs(collection(db, 'doctors'));
   const doctors = [];

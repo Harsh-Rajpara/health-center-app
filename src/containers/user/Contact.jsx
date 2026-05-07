@@ -1,4 +1,3 @@
-// src/components/ContactSection.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -9,7 +8,6 @@ const Contact = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
 
-          {/* Contact Info */}
           <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 sm:p-8">
             <h3 className="text-xl font-bold text-gray-900 pb-3 border-b-2 border-teal-500 inline-block mb-5">
               Contact Info

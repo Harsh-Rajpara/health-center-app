@@ -2,7 +2,7 @@ export const uploadImage = async (file) => {
   const formData = new FormData();
 
   formData.append("file", file);
-  formData.append("upload_preset", "doctors"); // 👈 important
+  formData.append("upload_preset", "doctors"); 
   formData.append("cloud_name", "djwovrhyl");
 
   const res = await fetch(
@@ -15,5 +15,5 @@ export const uploadImage = async (file) => {
 
   const data = await res.json();
 
-  return data.secure_url; // ✅ final image URL
+  return data.secure_url; 
 };

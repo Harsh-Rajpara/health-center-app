@@ -1,7 +1,7 @@
-// src/containers/admin/Appointments.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAppointments, updateAppointmentStatus } from "../../redux/slices/appointmentSlice";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const STATUS_CONFIG = {
   approved: { label: "Approved", dot: "bg-teal-500", badge: "bg-teal-50 text-teal-700" },
@@ -17,147 +17,90 @@ function AppointmentsAdmin() {
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
   const [showApproveModal, setShowApproveModal] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAppointments());
   }, [dispatch]);
 
-  // Function to open email client with pre-filled details
-  const openEmailClient = (to, subject, body) => {
-    const mailtoLink = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
+  const sendEmailViaCloudFunction = async (appointment, type, customMessage = '', rejectionReason = '') => {
+    setSendingEmail(true);
+    try {
+      const functions = getFunctions();
+      const sendEmail = httpsCallable(functions, 'sendAppointmentEmail');
+      
+      const result = await sendEmail({
+        appointment,
+        type,
+        message: customMessage,
+        reason: rejectionReason
+      });
+      
+      return result.data;
+    } catch (error) {
+      console.error('Error sending email:', error);
+      if (error.code === 'unauthenticated') {
+        alert('Please log in again to continue');
+      } else if (error.code === 'permission-denied') {
+        alert('You do not have permission to send emails');
+      } else {
+        alert(`Failed to send email: ${error.message}`);
+      }
+      return { success: false, error: error.message };
+    } finally {
+      setSendingEmail(false);
+    }
   };
 
-  const handleApprove = (appointment) => {
-    const subject = `✅ Appointment Approved - Health Center`;
-    
-    const body = `Dear ${appointment.fullName},
-
-Your appointment has been APPROVED!
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 APPOINTMENT DETAILS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📅 Date: ${appointment.date}
-⏰ Time: ${appointment.time}
-🏥 Department: ${appointment.department || 'General'}
-👨‍⚕️ Doctor: Dr. ${appointment.doctor || 'Staff Physician'}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📍 IMPORTANT INSTRUCTIONS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-• Please arrive 15 minutes before your scheduled time
-• Bring a valid ID (Driver's License or Passport)
-• Bring your insurance card
-• Bring any relevant medical records
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-${message ? `📝 FROM ADMIN:\n${message}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` : ''}
-NEED TO RESCHEDULE?
-Contact us at: (555) 123-4567 or reply to this email
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Best regards,
-Health Center Team
-123 Healthcare Avenue, Medical District
-Phone: (555) 123-4567
-Email: info@healthcenter.com
-`;
-
-    // Open email client
-    openEmailClient(appointment.email, subject, body);
-    
-    // Update status in Firebase
-    dispatch(updateAppointmentStatus({
-      id: appointment.id,
-      status: 'approved',
-      customMessage: message
-    }));
-    
-    alert('✅ Email client opened! Click Send to notify patient.');
-    setShowApproveModal(false);
-    setMessage("");
+  const handleApprove = async (appointment) => {
+    try {
+      const result = await sendEmailViaCloudFunction(appointment, 'approved', message);
+      
+      if (result.success) {
+        await dispatch(updateAppointmentStatus({
+          id: appointment.id,
+          status: 'approved',
+          customMessage: message
+        })).unwrap();
+        
+        alert('✅ Appointment approved and email sent successfully!');
+        setShowApproveModal(false);
+        setMessage("");
+      }
+    } catch (error) {
+      alert('❌ Failed to process approval. Please try again.');
+    }
   };
 
-  const handleReject = (appointment) => {
+  const handleReject = async (appointment) => {
     if (!reason) {
       alert('Please provide a reason for rejection');
       return;
     }
 
-    const subject = `❌ Appointment Update - Health Center`;
-    
-    const body = `Dear ${appointment.fullName},
-
-Your appointment has been REJECTED.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 APPOINTMENT DETAILS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📅 Date: ${appointment.date}
-⏰ Time: ${appointment.time}
-🏥 Department: ${appointment.department || 'General'}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-❌ REJECTION REASON
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-${reason}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📝 WHAT YOU CAN DO NEXT:
-
-1. Book a new appointment at: http://localhost:3000/appointment
-2. Call us to reschedule: (555) 123-4567
-3. Reply to this email for assistance
-
-We apologize for any inconvenience caused.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Best regards,
-Health Center Team
-123 Healthcare Avenue, Medical District
-Phone: (555) 123-4567
-Email: info@healthcenter.com
-`;
-
-    // Open email client
-    openEmailClient(appointment.email, subject, body);
-    
-    // Update status in Firebase
-    dispatch(updateAppointmentStatus({
-      id: appointment.id,
-      status: 'rejected',
-      reason: reason
-    }));
-    
-    alert('❌ Email client opened! Click Send to notify patient.');
-    setShowModal(false);
-    setReason("");
+    try {
+      const result = await sendEmailViaCloudFunction(appointment, 'rejected', '', reason);
+      
+      if (result.success) {
+        await dispatch(updateAppointmentStatus({
+          id: appointment.id,
+          status: 'rejected',
+          reason: reason
+        })).unwrap();
+        
+        alert('❌ Appointment rejected and email sent successfully!');
+        setShowModal(false);
+        setReason("");
+      }
+    } catch (error) {
+      alert('❌ Failed to process rejection. Please try again.');
+    }
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-96">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading appointments...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Appointment Management</h1>
-        <p className="text-gray-500 text-sm mt-1">Manage and send email notifications to patients</p>
+        <p className="text-gray-500 text-sm mt-1">Manage appointments and send email notifications</p>
       </div>
       
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -215,7 +158,8 @@ Email: info@healthcenter.com
                             setSelectedAppt(apt);
                             setShowApproveModal(true);
                           }}
-                          className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+                          disabled={sendingEmail}
+                          className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors disabled:opacity-50"
                         >
                           ✓ Approve
                         </button>
@@ -224,17 +168,18 @@ Email: info@healthcenter.com
                             setSelectedAppt(apt);
                             setShowModal(true);
                           }}
-                          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
+                          disabled={sendingEmail}
+                          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors disabled:opacity-50"
                         >
                           ✗ Reject
                         </button>
                       </div>
                     )}
                     {apt.status === 'approved' && (
-                      <span className="text-green-600 text-sm">Email sent</span>
+                      <span className="text-green-600 text-sm">✓ Approved</span>
                     )}
                     {apt.status === 'rejected' && (
-                      <span className="text-red-600 text-sm">Rejected</span>
+                      <span className="text-red-600 text-sm">✗ Rejected</span>
                     )}
                   </td>
                 </tr>
@@ -285,9 +230,10 @@ Email: info@healthcenter.com
               </button>
               <button
                 onClick={() => handleApprove(selectedAppt)}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                disabled={sendingEmail}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
               >
-                Approve & Compose Email
+                {sendingEmail ? 'Sending Email...' : 'Approve & Send Email'}
               </button>
             </div>
           </div>
@@ -336,10 +282,10 @@ Email: info@healthcenter.com
               </button>
               <button
                 onClick={() => handleReject(selectedAppt)}
-                disabled={!reason}
+                disabled={!reason || sendingEmail}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
-                Reject & Compose Email
+                {sendingEmail ? 'Sending Email...' : 'Reject & Send Email'}
               </button>
             </div>
           </div>

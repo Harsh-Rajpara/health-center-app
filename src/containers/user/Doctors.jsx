@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAllDoctors } from '../../firebase/config';
 
 const Doctors = () => {
+  const navigate = useNavigate();
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
@@ -19,29 +21,42 @@ const Doctors = () => {
     fetchDoctors();
   }, []);
 
-  const specializations = ['All', ...new Set(doctors.map(d => d.specialization).filter(Boolean))];
+  // Get unique departments/specializations
+  const specializations = ['All', ...new Set(doctors.map(d => d.department || d.specialization).filter(Boolean))];
 
+  // Filter doctors based on search and department
   const filtered = doctors.filter(doc => {
+    const doctorDept = doc.department || doc.specialization || '';
     const matchSearch =
       doc.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.specialization?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchFilter = activeFilter === 'All' || doc.specialization === activeFilter;
+      doctorDept.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchFilter = activeFilter === 'All' || doctorDept === activeFilter;
     return matchSearch && matchFilter;
   });
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Banner */}
-      <div className="bg-teal-700 py-14 px-6 text-center">
+      {/* Hero Banner with Back Button */}
+      <div className="relative bg-teal-700 py-14 px-6 text-center">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-lg px-3 py-2 sm:px-4 sm:py-2 transition-all duration-200 flex items-center gap-2 backdrop-blur-sm"
+          aria-label="Go back"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span className="hidden sm:inline text-sm font-medium">Back</span>
+        </button>
+        
         <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">Our Doctors</h1>
         <p className="text-teal-200 text-base max-w-xl mx-auto">
           Meet our team of experienced and compassionate medical professionals
         </p>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
-        {/* Search + Filter Bar */}
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-12 py-10">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-8">
           {/* Search */}
           <div className="relative mb-4">
@@ -50,7 +65,7 @@ const Doctors = () => {
             </svg>
             <input
               type="text"
-              placeholder="Search by name or specialization..."
+              placeholder="Search by name or department..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
@@ -67,7 +82,7 @@ const Doctors = () => {
             )}
           </div>
 
-          {/* Specialization filter pills */}
+          {/* Department Filters */}
           <div className="flex flex-wrap gap-2">
             {specializations.map(spec => (
               <button
@@ -85,7 +100,7 @@ const Doctors = () => {
           </div>
         </div>
 
-        {/* Results count */}
+        {/* Show count */}
         <div className="flex items-center justify-between mb-5">
           <p className="text-sm text-gray-500">
             Showing <span className="font-semibold text-gray-800">{filtered.length}</span> of{' '}
@@ -108,7 +123,6 @@ const Doctors = () => {
           </div>
         )}
 
-        {/* Empty state */}
         {!loading && filtered.length === 0 && (
           <div className="text-center py-20">
             <div className="w-16 h-16 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -123,14 +137,14 @@ const Doctors = () => {
 
         {/* Doctors Grid */}
         {!loading && filtered.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {filtered.map(doc => (
               <div
                 key={doc.id}
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 {/* Image */}
-                <div className="relative h-52 bg-gradient-to-br from-teal-50 to-teal-100 overflow-hidden">
+                <div className="relative h-64 bg-gradient-to-br from-teal-50 to-teal-100 overflow-hidden">
                   <img
                     src={doc.img || 'https://via.placeholder.com/300x200?text=Dr.'}
                     alt={doc.name}
@@ -142,20 +156,12 @@ const Doctors = () => {
                 {/* Info */}
                 <div className="p-4">
                   <h3 className="font-bold text-gray-900 text-base mb-0.5">Dr. {doc.name}</h3>
-                  <p className="text-teal-600 text-xs font-semibold mb-3">{doc.specialization}</p>
-
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1 bg-teal-50 text-teal-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                      <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                      Available
-                    </span>
-                    {doc.experience && (
-                      <span className="text-xs text-gray-400 font-medium">{doc.experience}</span>
-                    )}
-                  </div>
-
+                  <p className="text-teal-600 text-xs font-semibold mb-2">
+                    {doc.department || doc.specialization || 'General Medicine'}
+                  </p>
+                  {/* Optional: Add qualification if available */}
                   {doc.qualification && (
-                    <p className="text-xs text-gray-400 mt-2 truncate">{doc.qualification}</p>
+                    <p className="text-gray-500 text-xs">{doc.qualification}</p>
                   )}
                 </div>
               </div>

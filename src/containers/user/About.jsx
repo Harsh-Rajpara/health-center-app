@@ -1,4 +1,3 @@
-// src/components/AboutSection.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -48,7 +47,7 @@ const About = () => {
               ))}
             </div>
 
-            {/* Doctor signature */}
+            {/* Doctor name */}
             <div className="border-t border-gray-100 pt-6 flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-bold text-sm">Dr</span>
